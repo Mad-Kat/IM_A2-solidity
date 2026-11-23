@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Kasse</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
+</head>
+<body>
+  <h1>Kasse</h1>
+  <button id="connect">Mit MetaMask verbinden</button>
+  <p>Konto: <span id="account">–</span></p>
+  <p>Owner: <span id="owner">–</span></p>
+  <p>Kassenstand: <span id="balance">–</span></p>
+
+  <input id="amount" value="0.1"> Ether
+  <button id="deposit">Einzahlen</button>
+  <button id="withdraw">Auszahlen</button>
+  <p id="status"></p>
+
+  <h2>Verlauf</h2>
+  <ul id="history"></ul>
+
+  <script>
+    // Der erste Deploy von Account #0 auf einer frischen Kette.
+    const KASSE_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+
+    // Nur die Teile der Kasse, die diese Seite braucht.
+    const KASSE_ABI = [
+      "function owner() view returns (address)",
+      "function kassenstand() view returns (uint256)",
+      "function einzahlen() payable",
+      "function auszahlen(uint256 betrag)",
+    ];
+
+    const $ = (id) => document.getElementById(id);
+    let kasse;
+
+    async function refresh() {
+      $("owner").textContent = await kasse.owner();
+      $("balance").textContent = ethers.formatEther(await kasse.kassenstand()) + " ETH";
+
+      // TODO: den Verlauf der Einzahlungen in die Liste "history" schreiben
+    }
+
+    async function send(call) {
+      try {
+        $("status").textContent = "Warte auf MetaMask …";
+        const tx = await call();
+        await tx.wait();
+        $("status").textContent = "Bestätigt";
+        await refresh();
+      } catch (err) {
+        $("status").textContent = err.reason ?? err.shortMessage ?? err.message;
+      }
+    }
+
+    $("connect").onclick = async () => {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      kasse = new ethers.Contract(KASSE_ADDRESS, KASSE_ABI, signer);
+      $("account").textContent = signer.address;
+      await refresh();
+    };
+
+    $("deposit").onclick = () =>
+      send(() => kasse.einzahlen({ value: ethers.parseEther($("amount").value) }));
+
+    $("withdraw").onclick = () =>
+      send(() => kasse.auszahlen(ethers.parseEther($("amount").value)));
+  </script>
+</body>
+</html>

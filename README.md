@@ -95,3 +95,24 @@ ignition/modules/   das Deploy-Modul
 
 Hardhat 3 mit `node:test` und `viem`. OpenZeppelin ist installiert, für das Token-Labor und
 später für das Projekt.
+
+## Der Tresor
+
+`contracts/sicherheit/Tresor.sol` ist ein zweiter Contract mit einem Fehler, dem des DAO-Hacks von 2016. `Angreifer.sol` daneben nutzt ihn aus, und `test/Tresor.ts` prüft, ob der Angriff scheitert. Der Test ist rot, bis der Tresor repariert ist. Am Angreifer und am Test wird nichts geändert, die Reparatur liegt in einer Zeile des Tresors.
+
+## Zwei Frontends für die Kasse
+
+Zwei Webseiten sprechen mit derselben Kasse auf der lokalen Kette, über MetaMask und ethers.js.
+`frontend/kasse.html` ist eine einzelne Datei ohne Build. `frontend-react/` ist dieselbe Seite
+mit React und Vite. Beide erwarten die Kasse an `0x5FbDB2315678afecb367f032d93F642f64180aa3`,
+also als ersten Deploy auf einer frischen Kette.
+
+Nach `git pull` einmal `npm install`, dann in einem dritten Terminal:
+
+```bash
+npm run frontend          # http://localhost:8080/kasse
+npm run frontend-react    # http://localhost:5173
+```
+
+Auf diesem Branch ist die Kasse ergänzt, die Frontends laufen deshalb ohne die Aufgabe aus dem
+Hardhat-Blatt. In beiden Seiten fehlt der Verlauf der Einzahlungen, er ist mit `// TODO` markiert.

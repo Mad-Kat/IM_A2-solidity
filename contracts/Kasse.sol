@@ -2,6 +2,11 @@
 pragma solidity ^0.8.20;
 
 /// Eine Kasse, die Ether annimmt und nur ihrem Besitzer wieder herausgibt.
+///
+/// Worum es ging: Der Contract kennt keinen Namen und kein Passwort, nur Adressen.
+/// msg.sender ist die einzige Wahrheit darueber, wer ruft, und require am Anfang der
+/// Funktion ist die Regel. Was require ablehnt, wird komplett zurueckgenommen, das
+/// verbrauchte Gas ist trotzdem weg. Deshalb steht die Pruefung ganz oben.
 contract Kasse {
     address public owner;
     mapping(address => uint256) public einzahlungen;
@@ -10,7 +15,7 @@ contract Kasse {
     event Auszahlung(address an, uint256 betrag);
 
     constructor() {
-        // TODO: den Absender der Transaktion als Owner merken
+        owner = msg.sender;
     }
 
     function einzahlen() external payable {
@@ -19,8 +24,8 @@ contract Kasse {
     }
 
     function auszahlen(uint256 betrag) external {
-        // TODO: nur der Owner darf auszahlen, und nur, was die Kasse hat.
-        // Die Tests erwarten die Meldungen "nur der Owner" und "zu wenig in der Kasse".
+        require(msg.sender == owner, "nur der Owner");
+        require(betrag <= address(this).balance, "zu wenig in der Kasse");
         payable(owner).transfer(betrag);
         emit Auszahlung(owner, betrag);
     }

@@ -5,15 +5,23 @@
   "description": "IM_A2, Smart Contracts mit Hardhat: der Kasse-Contract mit Tests",
   "type": "module",
   "scripts": {
-    "test": "hardhat test"
+    "test": "hardhat test",
+    "frontend": "serve -l 8080 frontend",
+    "frontend-react": "vite frontend-react"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ignition": "^3.1.8",
     "@nomicfoundation/hardhat-toolbox-viem": "^5.0.7",
     "@openzeppelin/contracts": "^5.4.0",
     "@types/node": "^22.8.5",
+    "@vitejs/plugin-react": "^6.3.0",
+    "ethers": "^6.17.0",
     "hardhat": "^3.15.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "serve": "^14.2.8",
     "typescript": "~5.9.0",
-    "viem": "^2.47.6"
+    "viem": "^2.47.6",
+    "vite": "^8.3.8"
   }
 }
