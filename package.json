@@ -1,0 +1,19 @@
+{
+  "name": "im_a2-solidity",
+  "private": true,
+  "version": "0.1.0",
+  "description": "IM_A2, Smart Contracts mit Hardhat: der Kasse-Contract mit Tests",
+  "type": "module",
+  "scripts": {
+    "test": "hardhat test"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ignition": "^3.1.8",
+    "@nomicfoundation/hardhat-toolbox-viem": "^5.0.7",
+    "@openzeppelin/contracts": "^5.4.0",
+    "@types/node": "^22.8.5",
+    "hardhat": "^3.15.0",
+    "typescript": "~5.9.0",
+    "viem": "^2.47.6"
+  }
+}
