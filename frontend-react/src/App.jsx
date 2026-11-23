@@ -10,6 +10,7 @@ const KASSE_ABI = [
   "function kassenstand() view returns (uint256)",
   "function einzahlen() payable",
   "function auszahlen(uint256 betrag)",
+  "event Einzahlung(address von, uint256 betrag)",
 ];
 
 export default function App() {
@@ -19,13 +20,12 @@ export default function App() {
   const [balance, setBalance] = useState(null);
   const [amount, setAmount] = useState("0.1");
   const [status, setStatus] = useState("");
-  // TODO: einen Zustand für den Verlauf der Einzahlungen anlegen
+  const [history, setHistory] = useState([]);
 
   async function refresh(contract) {
     setOwner(await contract.owner());
     setBalance(await contract.kassenstand());
-
-    // TODO: den Verlauf der Einzahlungen laden
+    setHistory(await contract.queryFilter("Einzahlung"));
   }
 
   async function connect() {
@@ -63,7 +63,13 @@ export default function App() {
       <p>{status}</p>
 
       <h2>Verlauf</h2>
-      <ul>{/* TODO: den Verlauf als Liste anzeigen */}</ul>
+      <ul>
+        {history.map((e) => (
+          <li key={e.transactionHash}>
+            {e.args.von}: {formatEther(e.args.betrag)} ETH
+          </li>
+        ))}
+      </ul>
     </>
   );
 }

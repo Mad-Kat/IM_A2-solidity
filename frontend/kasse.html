@@ -30,6 +30,7 @@
       "function kassenstand() view returns (uint256)",
       "function einzahlen() payable",
       "function auszahlen(uint256 betrag)",
+      "event Einzahlung(address von, uint256 betrag)",
     ];
 
     const $ = (id) => document.getElementById(id);
@@ -39,7 +40,12 @@
       $("owner").textContent = await kasse.owner();
       $("balance").textContent = ethers.formatEther(await kasse.kassenstand()) + " ETH";
 
-      // TODO: den Verlauf der Einzahlungen in die Liste "history" schreiben
+      $("history").innerHTML = "";
+      for (const e of await kasse.queryFilter("Einzahlung")) {
+        const li = document.createElement("li");
+        li.textContent = e.args.von + ": " + ethers.formatEther(e.args.betrag) + " ETH";
+        $("history").append(li);
+      }
     }
 
     async function send(call) {

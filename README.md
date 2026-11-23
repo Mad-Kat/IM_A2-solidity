@@ -114,5 +114,5 @@ npm run frontend          # http://localhost:8080/kasse
 npm run frontend-react    # http://localhost:5173
 ```
 
-Auf diesem Branch ist die Kasse ergänzt, die Frontends laufen deshalb ohne die Aufgabe aus dem
-Hardhat-Blatt. In beiden Seiten fehlt der Verlauf der Einzahlungen, er ist mit `// TODO` markiert.
+Auf diesem Branch ist die Kasse ergänzt, und beide Seiten zeigen den Verlauf der Einzahlungen
+aus den Ereignissen der Kasse.

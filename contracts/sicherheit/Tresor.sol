@@ -2,8 +2,13 @@
 pragma solidity ^0.8.28;
 
 // Ein Tresor: jede Adresse zahlt Ether ein und hebt ihr Guthaben wieder ab.
-// Der Contract hat den Fehler des DAO-Hacks von 2016. Finden Sie ihn und
-// reparieren Sie ihn, bis der Test in test/Tresor.ts gruen ist.
+//
+// Worum es ging: abheben() zahlte zuerst aus und setzte das Guthaben erst
+// danach auf null. Ein Contract als Empfaenger konnte in seinem receive()
+// sofort wieder abheben() aufrufen, mit unveraendertem Guthaben, so oft er
+// wollte. Die Reparatur ist die Reihenfolge: erst pruefen, dann aendern,
+// dann erst rufen (Checks, Effects, Interactions). OpenZeppelin bietet
+// dafuer zusaetzlich den Modifier nonReentrant aus ReentrancyGuard.
 contract Tresor {
     mapping(address => uint256) public guthaben;
 
@@ -14,8 +19,8 @@ contract Tresor {
     function abheben() external {
         uint256 betrag = guthaben[msg.sender];
         require(betrag > 0, "nichts da");
+        guthaben[msg.sender] = 0;
         (bool ok, ) = msg.sender.call{value: betrag}("");
         require(ok, "Zahlung fehlgeschlagen");
-        guthaben[msg.sender] = 0;
     }
 }
